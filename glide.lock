@@ -1,0 +1,18 @@
+hash: d3e9e9d9574b753fceb47f973ef14f501ab09ac379cfecf01a28b3996bff3041
+updated: 2017-11-20T21:55:50.326893+09:00
+imports:
+- name: github.com/google/go-github
+  version: 471e67c93cdd36a5f7c9bba5d6d11665ba12147d
+  subpackages:
+  - github
+- name: github.com/google/go-querystring
+  version: 53e6ce116135b80d037921a7fdd5138cf32d7a8a
+  subpackages:
+  - query
+- name: golang.org/x/net
+  version: 9dfe39835686865bff950a07b394c12a98ddc811
+  subpackages:
+  - context
+- name: golang.org/x/oauth2
+  version: f95fa95eaa936d9d87489b15d1d18b97c1ba9c28
+testImports: []
