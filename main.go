@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -13,6 +14,10 @@ import (
 
 	"github.com/google/go-github/github"
 	"golang.org/x/net/context"
+)
+
+var (
+	dockerTagRegexp = regexp.MustCompile(`chainpoint-node:[a-z0-9]+`)
 )
 
 func main() {
@@ -55,6 +60,7 @@ func mainCLI() int {
 	timer := time.NewTicker(interval)
 	defer timer.Stop()
 
+	var newCommit *github.Branch
 	for {
 		<-timer.C
 
@@ -72,7 +78,26 @@ func mainCLI() int {
 		log.Printf("%v: last SHA1: %v, new SHA1: %v\n", t, lastSha1, newSha1)
 		if lastSha1 != newSha1 {
 			log.Printf("%s", newSha1)
-			return 0
+			newCommit = new
+			break
 		}
 	}
+
+	file, _, _, err := gh.Repositories.GetContents(context.Background(), repo[0], repo[1], "docker-compose.yaml", &github.RepositoryContentGetOptions{
+		Ref: newCommit.Commit.GetSHA(),
+	})
+	if err != nil {
+		log.Println(err)
+		return 1
+	}
+	b, err := file.GetContent()
+	if err != nil {
+		log.Println(err)
+		return 1
+	}
+
+	m := dockerTagRegexp.FindString(b)
+	mm := strings.TrimPrefix(m, "chainpoint-node:")
+	fmt.Println(mm)
+	return 0
 }
